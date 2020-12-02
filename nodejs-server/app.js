@@ -1,30 +1,21 @@
+const path = require('path');
+const http = require('http');
 const express = require('express');
 
-const path = require('path');
-var cors = require('cors')
-
-
-//app setup
-const app = express();
-const PORT = 5000;
-var server = app.listen(PORT, function () {
-    console.log('listening on '+PORT);
-})
-var io = require('socket.io')(server, {
-    origins: 'https://localhost:8080',
-    handlePreflightRequest: (req, res) => {
-        res.writeHead(200, {
-            "Access-Control-Allow-Origin": "https://localhost:8080",
-            "Access-Control-Allow-Credentials": true,
-            "Access-Control-Allow-Methods": "GET,POST"
-        });
-        res.end();
+const publicPath = path.join(__dirname, '../vue-fe');
+const port = 5000;
+let app = express();
+let server = http.createServer(app);
+const io = require("socket.io")(server, {
+    cors: {
+        origin: "https://localhost:8080",
+        methods: ["GET", "POST"]
     }
 });
 
-//static files setup
-//app.use(express.static(path.join(__dirname, '../vue-fe/*')));
+let chatMessages = [];
 
+app.use(express.static(publicPath));
 
 //socket setup
 io.on('connection', (socket) => {
@@ -40,3 +31,10 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('typing', data);
     });
 },);
+
+server.listen(port, ()=>{
+    console.log(`Server is up on port ${port}`);
+})
+
+
+

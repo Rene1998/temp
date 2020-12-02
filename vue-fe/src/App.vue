@@ -5,15 +5,16 @@
     <input v-model="handle" placeholder="Zvolte si meno">
     <div v-for="message in msgs" :key="message.message" v-show="msgs.length > 1">
       <p><strong>{{message.handle}} :</strong> {{message.message}}</p>
-      <p><em>{{someoneIsTyping}}</em></p>
+      <!--<p><em>{{someoneIsTyping}}</em></p>-->
     </div>
-    <input v-model="message" v-on:keydown="typing()" placeholder="Napiste spravu" >
+    <input v-model="message"  placeholder="Napiste spravu" >
     <button :click="sendMessage()" v-show="message != '' && message.length >= 2">Odoslat spravu</button>
   </div>
 </template>
 
 <script>
 export default {
+  /* eslint-disable no-debugger */
   name: 'App',
   data(){
       return{
@@ -26,23 +27,33 @@ export default {
     //Spustenie pri pripojeni
     connect() {
       console.log('socket connected')
-      },
+    },
+    disconnect(){
+      console.log('socked disconnected')
+    }
   },
   methods: {
       //Poslanie spravy
       sendMessage() {
-        this.$socket.emit('chat', this.handle)
+        console.log('posielanie spravy')
+        if(this.handle && this.message != '' && this.message.length && this.handle.length >=2) {
+          this.$socket.emit('chat', {
+            handle: this.handle,
+            message: this.message
+          })
+        }
+        else{
+          console.log('sendmessage err')
+        }
       },
       //Emitovanie, ci dany user pise alebo nie
-      typing() {
-        // eslint-disable-next-line no-debugger
-        debugger
+      /*typing() {
         this.$socket.emit('typing', this.handle)
-      }
+      }*/
   },
   computed:{
       //Zistovanie, ci niekto na servery nieco pise, ak ano zobrayi to jeho meno
-      someoneIsTyping(){
+      /*someoneIsTyping(){
         var temp;
         this.sockets.subscribe('typing', (data) => {
           if( data.handle != '' || null || undefined){
@@ -53,11 +64,9 @@ export default {
           }
         })
         return temp;
-      }
+      }*/
   },
   mounted() {
-
-
       //Pridavanie sprav do arrayu
       this.sockets.subscribe('chat', (data) => {
         console.log(data)
@@ -66,6 +75,7 @@ export default {
             'message': data.message,
             'handle': data.handle
           });
+          console.log(data);
         }
       })
   }

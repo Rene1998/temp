@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import App from './App.vue';
-
+import store from "./store";
 
 //import socketio from 'socket.io';
 //import VueSocketIO from 'vue-socket.io';
@@ -9,7 +9,7 @@ import App from './App.vue';
 
 //Vue.use(VueSocketIO, SocketInstance);
 
-import VueSocketIO from 'vue-socket.io'
+/*import VueSocketIO from 'vue-socket.io'
 
 //const options = { path: '/vue-fe/' }
 
@@ -18,18 +18,23 @@ Vue.use(new VueSocketIO({
       //connection: SocketIO('http://localhost:5000', options)
       connection: 'http://localhost:5000'
     })
-);
+);*/
 
 //socket io
-/*import * as io from "socket.io-client";
+import * as io from "socket.io-client";
 import VueSocketIO from "vue-socket.io";
 
 Vue.use(
     new VueSocketIO({
         debug: true,
         connection: io('http://localhost:5000'),
+        vuex: {
+            store,
+            actionPrefix: "SOCKET_",
+            mutationPrefix: "SOCKET_"
+        }
     })
-);*/
+);
 
 
 

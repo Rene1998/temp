@@ -31,7 +31,10 @@ Vue.use(
     })
 );
 
+//emoji
+import VEmojiPicker from 'v-emoji-picker';
 
+Vue.use(VEmojiPicker);
 
 
 Vue.config.productionTip = false;

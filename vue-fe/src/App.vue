@@ -2,26 +2,30 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <br>
-    <div class="new_line elements ">
-      <input class="new_line elements" v-model="handle" placeholder="Zvolte si meno">
+    <div class="new_line">
+      <input class="new_line inputField" v-model="handle" placeholder="Zvolte si meno">
     </div>
-    <div class="new_line elements" v-for="(message, index) in msgs" :key="index" v-show="msgs.length > 1">
+    <div class="new_line chat" v-for="(message, index) in msgs" :key="index" v-show="msgs.length > 1">
       <p><strong>{{message.handle}} :</strong> {{message.message}}</p>
       <!--<p><em>{{someoneIsTyping}}</em></p>-->
     </div>
     <div class="new_line elements">
       <textarea v-model="message" placeholder="Napiste spravu">
     </textarea>
+      <button v-on:click="showEmoji = !showEmoji"> Emoji</button>
     </div>
     <div class="new_line elements">
       <button v-on:click="sendMessage()"
               v-show="message != '' && message.length >= 2"> Odoslat spravu
       </button>
+      <VEmojiPicker v-show="showEmoji == true" @select="selectEmoji" />
+
     </div>
   </div>
 </template>
 
 <script>
+  import { VEmojiPicker } from 'v-emoji-picker';
 export default {
   /* eslint-disable no-debugger */
   name: 'App',
@@ -32,10 +36,18 @@ export default {
           message: 'Vitaj' //Musel dom nastavit nejaky prvy element do arrayu inak by zobrayilo prvu spravu a6 keby sa odosle dalsia
         }],
         handle: '',
-        message: ''
+        message: '',
+        showEmoji: false
       }
   },
+  components: {
+    VEmojiPicker
+  },
   methods: {
+    selectEmoji(emoji) {
+      console.log(emoji.data);
+      this.message += emoji.data;
+    },
     //Poslanie spravy
     sendMessage() {
       if(this.handle && this.message != '' && this.message.length && this.handle.length >=2) {
@@ -49,10 +61,6 @@ export default {
         console.log('sendmessage err')
       }
     }
-    //Emitovanie, ci dany user pise alebo nie
-    /*typing() {
-      this.$socket.emit('typing', this.handle)
-    }*/
   },
   sockets: {
     //Spustenie pri pripojeni
@@ -73,30 +81,6 @@ export default {
         console.log('Message was successfully received');
     }
   },
-  computed:{
-      //Zistovanie, ci niekto na servery nieco pise, ak ano zobrayi to jeho meno
-      /*someoneIsTyping(){
-        var temp;
-        this.sockets.subscribe('typing', (data) => {
-          if( data.handle != '' || null || undefined){
-            temp = data.handle+' is typing a message ...';
-          }
-          else{
-            temp = '';
-          }
-        })
-        return temp;
-      }*/
-  },
-  mounted() {
-    /*this.$socket.listener.subscribe('chat-response', (data) => {
-      if(data.Response_code == 200){
-      this.msgs.push(data.Response);
-      console.log('Message was successfully received'+ data);
-    }
-    });*/
-  }
-
 }
 
 </script>
@@ -114,9 +98,17 @@ export default {
     clear:both;
 }
 .elements{
+  display: flex;
   margin-top:40px;
-  text-align: center;
-  border: black;
+  justify-content: center;
+}
+.chat{
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
+.inputField {
+  border-bottom: 2px solid black;
 }
   textarea{
     width: 300px;

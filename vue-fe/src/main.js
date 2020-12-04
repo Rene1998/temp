@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import App from './App.vue';
-import store from "./store";
 
 //import socketio from 'socket.io';
 //import VueSocketIO from 'vue-socket.io';
@@ -24,15 +23,11 @@ Vue.use(new VueSocketIO({
 import * as io from "socket.io-client";
 import VueSocketIO from "vue-socket.io";
 
+
 Vue.use(
     new VueSocketIO({
         debug: true,
         connection: io('http://localhost:5000'),
-        vuex: {
-            store,
-            actionPrefix: "SOCKET_",
-            mutationPrefix: "SOCKET_"
-        }
     })
 );
 

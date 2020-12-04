@@ -2,13 +2,22 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <br>
-    <input v-model="handle" placeholder="Zvolte si meno">
-    <div v-for="message in msgs" :key="message.message" v-show="msgs.length > 1">
+    <div class="new_line elements ">
+      <input class="new_line elements" v-model="handle" placeholder="Zvolte si meno">
+    </div>
+    <div class="new_line elements" v-for="(message, index) in msgs" :key="index" v-show="msgs.length > 1">
       <p><strong>{{message.handle}} :</strong> {{message.message}}</p>
       <!--<p><em>{{someoneIsTyping}}</em></p>-->
     </div>
-    <input v-model="message"  placeholder="Napiste spravu" >
-    <button :click="sendMessage()" v-show="message != '' && message.length >= 2">Odoslat spravu</button>
+    <div class="new_line elements">
+      <textarea v-model="message" placeholder="Napiste spravu">
+    </textarea>
+    </div>
+    <div class="new_line elements">
+      <button v-show="message != '' && message.length >= 2"
+                 :click="sendMessage()"> Odoslat spravu
+      </button>
+    </div>
   </div>
 </template>
 
@@ -18,7 +27,7 @@ export default {
   name: 'App',
   data(){
       return{
-        msgs: [{}],
+        msgs: [],
         handle: '',
         message: ''
       }
@@ -30,17 +39,27 @@ export default {
     },
     disconnect(){
       console.log('socked disconnected')
+    },
+    chatResponse(data){
+        var wasFound = this.msgs.find( (ele)=> {
+          return ele.message === data.message;
+        })
+        if(!wasFound) {
+          this.msgs.push(data);
+          console.log(data.handle + data.message +'aaaaaaa')
+        }else{console.log('Message already obtained')}
+        console.log('Message was successfully received');
     }
   },
   methods: {
       //Poslanie spravy
       sendMessage() {
-        console.log('posielanie spravy')
         if(this.handle && this.message != '' && this.message.length && this.handle.length >=2) {
           this.$socket.emit('chat', {
             handle: this.handle,
             message: this.message
           })
+          console.log('sprava bola odoslana')
         }
         else{
           console.log('sendmessage err')
@@ -67,17 +86,12 @@ export default {
       }*/
   },
   mounted() {
-      //Pridavanie sprav do arrayu
-      this.sockets.subscribe('chat', (data) => {
-        console.log(data)
-        if(data.message & data.handle != null || undefined || '') {
-          this.msgs.push({
-            'message': data.message,
-            'handle': data.handle
-          });
-          console.log(data);
-        }
-      })
+    /*this.$socket.listener.subscribe('chat-response', (data) => {
+      if(data.Response_code == 200){
+      this.msgs.push(data.Response);
+      console.log('Message was successfully received'+ data);
+    }
+    });*/
   }
 
 }
@@ -93,4 +107,16 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+.new_line{
+    clear:both;
+}
+.elements{
+  margin-top:40px;
+  text-align: center;
+  border: black;
+}
+  textarea{
+    width: 300px;
+    height: 200px;
+  }
 </style>

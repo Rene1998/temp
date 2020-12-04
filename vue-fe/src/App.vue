@@ -14,8 +14,8 @@
     </textarea>
     </div>
     <div class="new_line elements">
-      <button v-show="message != '' && message.length >= 2"
-                 :click="sendMessage()"> Odoslat spravu
+      <button v-on:click="sendMessage()"
+              v-show="message != '' && message.length >= 2"> Odoslat spravu
       </button>
     </div>
   </div>
@@ -27,10 +27,32 @@ export default {
   name: 'App',
   data(){
       return{
-        msgs: [],
+        msgs: [{
+          handle: 'Admin',
+          message: 'Vitaj' //Musel dom nastavit nejaky prvy element do arrayu inak by zobrayilo prvu spravu a6 keby sa odosle dalsia
+        }],
         handle: '',
         message: ''
       }
+  },
+  methods: {
+    //Poslanie spravy
+    sendMessage() {
+      if(this.handle && this.message != '' && this.message.length && this.handle.length >=2) {
+          this.$socket.emit('chat', {
+            handle: this.handle,
+            message: this.message
+          })
+        console.log('sprava bola odoslana')
+      }
+      else{
+        console.log('sendmessage err')
+      }
+    }
+    //Emitovanie, ci dany user pise alebo nie
+    /*typing() {
+      this.$socket.emit('typing', this.handle)
+    }*/
   },
   sockets: {
     //Spustenie pri pripojeni
@@ -50,25 +72,6 @@ export default {
         }else{console.log('Message already obtained')}
         console.log('Message was successfully received');
     }
-  },
-  methods: {
-      //Poslanie spravy
-      sendMessage() {
-        if(this.handle && this.message != '' && this.message.length && this.handle.length >=2) {
-          this.$socket.emit('chat', {
-            handle: this.handle,
-            message: this.message
-          })
-          console.log('sprava bola odoslana')
-        }
-        else{
-          console.log('sendmessage err')
-        }
-      },
-      //Emitovanie, ci dany user pise alebo nie
-      /*typing() {
-        this.$socket.emit('typing', this.handle)
-      }*/
   },
   computed:{
       //Zistovanie, ci niekto na servery nieco pise, ak ano zobrayi to jeho meno

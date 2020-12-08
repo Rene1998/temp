@@ -5,7 +5,7 @@
     <div class="new_line">
       <input class="new_line inputField" v-model="handle" placeholder="Zvolte si meno">
     </div>
-    <div class="new_line chat" v-for="(message, index) in msgs" :key="index" v-show="msgs.length > 1">
+    <div class="new_line chat" v-for="(message) in msgs" :key="message.message" >
       <p><strong>{{message.handle}} :</strong> {{message.message}}</p>
       <!--<p><em>{{someoneIsTyping}}</em></p>-->
     </div>
@@ -31,10 +31,7 @@ export default {
   name: 'App',
   data(){
       return{
-        msgs: [{
-          handle: 'Admin',
-          message: 'Vitaj' //Musel dom nastavit nejaky prvy element do arrayu inak by zobrayilo prvu spravu a6 keby sa odosle dalsia
-        }],
+        msgs: [],
         handle: '',
         message: '',
         showEmoji: false

@@ -6,10 +6,15 @@ const publicPath = path.join(__dirname, '../vue-fe');
 const port = 5000;
 let app = express();
 let server = http.createServer(app);
-const io = require("socket.io")(server, {
+var io = require('socket.io')(server, {
+    origins: 'http://localhost:8080',
     cors: {
-        origin: "https://localhost:8080",
-        methods: ["GET", "POST"]
+        credentials: true,
+        origin: "http://localhost:8080",
+    },
+    handlePreflightRequest: (req, res) => {
+        res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+        res.header('Access-Control-Allow-Credentials', true);
     }
 });
 
